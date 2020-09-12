@@ -1,13 +1,21 @@
-GET http://localhost:8000/nodes/0/blockchain HTTP/1.1
 
-###
-
-GET https://example.com/topics/1 HTTP/1.1
-
-###
-
+### Create a new node
 POST http://localhost:8000/nodes HTTP/1.1
 content-type: application/json
 
 {
 }
+
+### Get a node's blockchain
+GET http://localhost:8000/nodes/0/blocks HTTP/1.1
+
+### Generate a new block on a node
+POST http://localhost:8000/nodes/0/blocks HTTP/1.1
+content-type: application/json
+
+{
+  "data": "I am dummy data!"
+}
+
+
+

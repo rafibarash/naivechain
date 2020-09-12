@@ -10,18 +10,14 @@ import (
 // Block is an individual block in a blockchain.
 type Block struct {
 	Index     int
-	timestamp time.Time
-	hash      hash.Hash
-	prevHash  hash.Hash
+	Timestamp time.Time
+	Hash      hash.Hash
+	PrevHash  hash.Hash
 	Data      string
 }
 
 // Blockchain is a slice of Blocks.
 type Blockchain []*Block
-
-func (b Block) String() string {
-	return fmt.Sprintf("{\"Index\": %d, {\"Data\": %q}", b.Index, b.Data)
-}
 
 // AddBlock attempts to add a given block to the blockchain.
 func (bc Blockchain) AddBlock(b *Block) (Blockchain, error) {
@@ -36,10 +32,10 @@ func (bc Blockchain) AddBlock(b *Block) (Blockchain, error) {
 
 // isValidBlock returns true if the following conditions are met:
 // - The previous block's Index is one below the new block's Index.
-// - The previous block's hash is equal to the new block's previous hash.
-// - The new block's hash member variable must equal the result of actually calculating the block's hash.
+// - The previous block's Hash is equal to the new block's previous Hash.
+// - The new block's Hash member variable must equal the result of actually calculating the block's Hash.
 func isValidBlock(b *Block, pb *Block) bool {
-	return b.Index-1 == pb.Index && b.prevHash == pb.hash && b.hash == b.genhash()
+	return b.Index-1 == pb.Index && b.PrevHash == pb.Hash && b.Hash == b.genHash()
 }
 
 // IsValid returns true if all blocks in the blockchain are valid.
@@ -52,10 +48,10 @@ func (bc Blockchain) IsValid() bool {
 	return true
 }
 
-// New returns a new Block holding the information passed in, a timestamp, and a generated hash.
-func New(i int, d string, ph hash.Hash) *Block {
-	b := &Block{Index: i, timestamp: time.Now(), Data: d, prevHash: ph}
-	b.genhash()
+// NewBlock returns a new Block holding the information passed in, a Timestamp, and a generated Hash.
+func (bc Blockchain) NewBlock(data string) *Block {
+	b := &Block{Index: len(bc), Timestamp: time.Now(), Data: data, PrevHash: bc[len(bc)-1].Hash}
+	b.Hash = b.genHash()
 
 	return b
 }
@@ -68,15 +64,15 @@ func NewChain() Blockchain {
 	return bc
 }
 
-// genhash generates and saves a hash for this block
-func (b *Block) genhash() hash.Hash {
-	// Init hash
+// genHash generates and saves a Hash for this block
+func (b *Block) genHash() hash.Hash {
+	// Init Hash
 	h := sha256.New()
 
 	// Create string payload
-	payload := b.timestamp.String() + b.Data + string(b.Index)
+	payload := b.Timestamp.String() + b.Data + string(b.Index)
 
-	// Write payload to hash
+	// Write payload to Hash
 	h.Write([]byte(payload))
 
 	return h
@@ -84,8 +80,8 @@ func (b *Block) genhash() hash.Hash {
 
 // genesis returns the first Block in a blockchain.
 func genesis() *Block {
-	b := &Block{Index: 0, timestamp: time.Now(), Data: "First block", prevHash: nil}
-	b.hash = b.genhash()
+	b := &Block{Index: 0, Timestamp: time.Now(), Data: "First block", PrevHash: nil}
+	b.Hash = b.genHash()
 
 	return b
 }
