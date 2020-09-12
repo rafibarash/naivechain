@@ -1,0 +1,13 @@
+GET http://localhost:8000/nodes/0/blockchain HTTP/1.1
+
+###
+
+GET https://example.com/topics/1 HTTP/1.1
+
+###
+
+POST http://localhost:8000/nodes HTTP/1.1
+content-type: application/json
+
+{
+}

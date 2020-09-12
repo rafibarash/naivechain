@@ -1,7 +1,20 @@
 package node
 
-import "github.com/rafibarash/naivechain/block"
+import (
+	"fmt"
+
+	"github.com/rafibarash/naivechain/block"
+)
 
 type Node struct {
-	blockchain []block.Block
+	ID         string
+	Blockchain block.Blockchain
+}
+
+func (n Node) String() string {
+	return fmt.Sprintf("{\"id\": %q, {\"blockchain\": %v}", n.ID, n.Blockchain)
+}
+
+func New(id string) *Node {
+	return &Node{ID: id, Blockchain: block.NewChain()}
 }
