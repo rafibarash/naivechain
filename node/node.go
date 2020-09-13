@@ -11,7 +11,7 @@ type Node struct {
 
 func New(id string) *Node {
 	n := &Node{ID: id, Blockchain: block.NewChain()}
-	// TODO: Add node to webserver
+	// TODO: Add node to websocket
 	// TODO: Sync node's blockchain with other nodes
 	return n
 }
