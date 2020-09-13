@@ -6,6 +6,9 @@ content-type: application/json
 {
 }
 
+### Get all nodes
+GET http://localhost:8000/nodes HTTP/1.1
+
 ### Get a node's blockchain
 GET http://localhost:8000/nodes/0/blocks HTTP/1.1
 

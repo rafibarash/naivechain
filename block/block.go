@@ -1,9 +1,9 @@
 package block
 
 import (
+	"bytes"
 	"crypto/sha256"
 	"fmt"
-	"hash"
 	"time"
 )
 
@@ -11,8 +11,8 @@ import (
 type Block struct {
 	Index     int
 	Timestamp time.Time
-	Hash      hash.Hash
-	PrevHash  hash.Hash
+	Hash      []byte
+	PrevHash  []byte
 	Data      string
 }
 
@@ -35,7 +35,7 @@ func (bc Blockchain) AddBlock(b *Block) (Blockchain, error) {
 // - The previous block's Hash is equal to the new block's previous Hash.
 // - The new block's Hash member variable must equal the result of actually calculating the block's Hash.
 func isValidBlock(b *Block, pb *Block) bool {
-	return b.Index-1 == pb.Index && b.PrevHash == pb.Hash && b.Hash == b.genHash()
+	return b.Index-1 == pb.Index && bytes.Compare(b.PrevHash, pb.Hash) == 0 && bytes.Compare(b.Hash, b.genHash()) == 0
 }
 
 // IsValid returns true if all blocks in the blockchain are valid.
@@ -65,7 +65,7 @@ func NewChain() Blockchain {
 }
 
 // genHash generates and saves a Hash for this block
-func (b *Block) genHash() hash.Hash {
+func (b *Block) genHash() []byte {
 	// Init Hash
 	h := sha256.New()
 
@@ -75,7 +75,7 @@ func (b *Block) genHash() hash.Hash {
 	// Write payload to Hash
 	h.Write([]byte(payload))
 
-	return h
+	return h.Sum(nil)
 }
 
 // genesis returns the first Block in a blockchain.
