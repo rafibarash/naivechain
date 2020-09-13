@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/rafibarash/naivechain/node"
 )
@@ -15,16 +16,23 @@ var (
 	nodes = make(map[string]*node.Node, 0)
 )
 
-// RunHTTPServer runs the HTTP server to interact with nodes.
+// RunHTTPServer runs the HTTP server to serve the frontend and the blockchain API.
 func RunHTTPServer() {
 	r := gin.Default()
 
-	r.GET("/nodes", getNodes)
-	r.POST("/nodes", createNode)
-	r.GET("/nodes/:nodeID/blocks", getNodeBlocks)
-	r.POST("/nodes/:nodeID/blocks", createNodeBlock)
+	// Serve frontend static files.
+	r.Use(static.Serve("/", static.LocalFile("./frontend/build", true)))
 
-	log.Panic(r.Run(":8000"))
+	// Setup routes for the blockchain API.
+	api := r.Group("/api")
+	{
+		api.GET("/nodes", getNodes)
+		api.POST("/nodes", createNode)
+		api.GET("/nodes/:nodeID/blocks", getNodeBlocks)
+		api.POST("/nodes/:nodeID/blocks", createNodeBlock)
+	}
+
+	log.Panic(r.Run(":8080"))
 }
 
 // getNodes gets information about all the nodes.
